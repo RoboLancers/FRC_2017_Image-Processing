@@ -50,16 +50,23 @@ class Vision:
 
             return first_largest_contour, second_largest_contour
 
+    '#Calculate the centoid of the contour'
+
+    @staticmethod
+    def calculate_centroid(contour):
+
+        moment = cv2.moments(contour)
+        contour_x = int(moment["m10"] / moment["m00"])
+        contour_y = int(moment["m01"] / moment["m00"])
+
+        return contour_x, contour_y
+
     '#Draws contour on the image'
 
     @staticmethod
-    def draw_contours(image, largestContour, secondLargestContour):
-        x, y, w, h = cv2.boundingRect(largestContour)
-        cv2.drawContours(image, largestContour, -1, (255, 0, 0), 2)
-        cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
-
-        x, y, w, h = cv2.boundingRect(secondLargestContour)
-        cv2.drawContours(image, secondLargestContour, -1, (255, 0, 0), 2)
+    def draw_contours(image, contour):
+        x, y, w, h = cv2.boundingRect(contour)
+        cv2.drawContours(image, contour, -1, (255, 0, 0), 2)
         cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
     '#Create a window for the trackbars'
@@ -94,7 +101,8 @@ class Vision:
         firstContour, secondContour = find_contours(maskImage)
 
         # Draws the contours on the mask
-        draw_contours(maskImage, firstContour, secondContour)
+        draw_contours(maskImage, firstContour)
+        draw_contours(maskImage, secondContour)
 
         # Shows the image to the screen
         cv2.imshow("Frame", frame)
