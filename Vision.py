@@ -1,4 +1,10 @@
 import cv2
+import numpy as np
+import LancerTable
+import os
+
+os.system("uvcdynctrl -s 'Exposure, Auto' 1")
+os.system("uvcdynctrl -s 'Exposure (Absolute)' 5")
 
 
 class Vision:
@@ -56,10 +62,10 @@ class Vision:
     def calculate_centroid(contour):
 
         moment = cv2.moments(contour)
-        contour_x = int(moment["m10"] / moment["m00"])
-        contour_y = int(moment["m01"] / moment["m00"])
+        center_x = int(moment["m10"] / moment["m00"])
+        center_y = int(moment["m01"] / moment["m00"])
 
-        return contour_x, contour_y
+        return center_x, center_y
 
     '#Draws contour on the image'
 
@@ -68,6 +74,22 @@ class Vision:
         x, y, w, h = cv2.boundingRect(contour)
         cv2.drawContours(image, contour, -1, (255, 0, 0), 2)
         cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+    '#Find the angle to turn'
+
+    @staticmethod
+    def get_angle(frame, contour):
+        height, width, channels = frame.shape
+        center_x, center_y = Vision.calculate_centroid(contour)
+
+        pixel_offset = width / 2 - center_x;
+        angle_offset = 73 * pixel_offset / width
+        angle_offset -= 3.5
+
+        print(str(angle_offset))
+
+        return angle_offset
+
 
     '#Create a window for the trackbars'
     cv2.namedWindow("Trackbars", cv2.WINDOW_NORMAL)
@@ -82,31 +104,40 @@ class Vision:
     cv2.createTrackbar("Value Lower", "Trackbars", 0, 255, do_nothing())
     cv2.createTrackbar("Value Upper", "Trackbars", 255, 255, do_nothing())
 
+    nt = LancerTable.get_network_table()
+
     camera = cv2.VideoCapture(0)
+    camera.set(3, 160);
+    camera.set(4, 120);
 
     while True:
         # Define both the lower and upper boundary of the ball tracking
-        greenLower = (cv2.getTrackbarPos("Hue Lower", "Trackbars"), cv2.getTrackbarPos("Saturation Lower", "Trackbars"),
-                      cv2.getTrackbarPos("Value Lower", "Trackbars"))
-        greenUpper = (cv2.getTrackbarPos("Hue Upper", "Trackbars"), cv2.getTrackbarPos("Saturation Upper", "Trackbars"),
-                      cv2.getTrackbarPos("Value Upper", "Trackbars"))
+        greenLower = np.array([cv2.getTrackbarPos("Hue Lower", "Trackbars"), cv2.getTrackbarPos("Saturation Lower", "Trackbars"),
+                      cv2.getTrackbarPos("Value Lower", "Trackbars")])
+        greenUpper = np.array([cv2.getTrackbarPos("Hue Upper", "Trackbars"), cv2.getTrackbarPos("Saturation Upper", "Trackbars"),
+                      cv2.getTrackbarPos("Value Upper", "Trackbars")])
 
         # Read the frame from the camera
         (grabbed, frame) = camera.read()
 
         # Process the image to get a mask
-        maskImage = process_image(frame, greenLower, greenUpper)
+        mask_image = process_image(frame, greenLower, greenUpper)
 
         # Find the largest and second largest contour
-        firstContour, secondContour = find_contours(maskImage)
+        first_contour, second_contour = find_contours(mask_image)
 
         # Draws the contours on the mask
-        draw_contours(maskImage, firstContour)
-        draw_contours(maskImage, secondContour)
+        draw_contours(mask_image, first_contour)
+        draw_contours(mask_image, second_contour)
 
         # Shows the image to the screen
         cv2.imshow("Frame", frame)
-        cv2.imshow("Mask Frame", maskImage)
+        cv2.imshow("Mask Frame", mask_image)
+
+        angle_to_bigger_target = get_angle(mask_image, first_contour)
+        angle_to_second_target = get_angle(mask_image, second_contour)
+
+        nt.putNumber("First Angle to Turn", angle_to_bigger_target)
 
         key = cv2.waitKey(1) & 0xFF
 
