@@ -1,10 +1,11 @@
 import cv2
 import numpy as np
 from networktables import NetworkTable
+import os
 
 
-# os.system("uvcdynctrl -s 'Exposure, Auto' 1")
-# os.system("uvcdynctrl -s 'Exposure (Absolute)' 5")
+os.system("uvcdynctrl -s 'Exposure, Auto' 1")
+os.system("uvcdynctrl -s 'Exposure (Absolute)' 5")
 
 NetworkTable.setIPAddress('10.51.15.2')
 NetworkTable.setClientMode()
@@ -46,17 +47,17 @@ def get_angle(frames, contour):
 
 
 '#Create a window for the trackbars'
-#cv2.namedWindow("Trackbars", cv2.WINDOW_NORMAL)
+cv2.namedWindow("Trackbars", cv2.WINDOW_NORMAL)
 
 '#Create trackbars to filter image'
-#cv2.createTrackbar("Hue Lower", "Trackbars", 0, 180, do_nothing)
-#cv2.createTrackbar("Hue Upper", "Trackbars", 180, 180, do_nothing)
+cv2.createTrackbar("Hue Lower", "Trackbars", 0, 180, do_nothing)
+cv2.createTrackbar("Hue Upper", "Trackbars", 180, 180, do_nothing)
 
-#cv2.createTrackbar("Saturation Lower", "Trackbars", 0, 255, do_nothing)
-#cv2.createTrackbar("Saturation Upper", "Trackbars", 255, 255, do_nothing)
+cv2.createTrackbar("Saturation Lower", "Trackbars", 0, 255, do_nothing)
+cv2.createTrackbar("Saturation Upper", "Trackbars", 255, 255, do_nothing)
 
-#cv2.createTrackbar("Value Lower", "Trackbars", 0, 255, do_nothing)
-#cv2.createTrackbar("Value Upper", "Trackbars", 255, 255, do_nothing)
+cv2.createTrackbar("Value Lower", "Trackbars", 0, 255, do_nothing)
+cv2.createTrackbar("Value Upper", "Trackbars", 255, 255, do_nothing)
 
 camera = cv2.VideoCapture(0)
 camera.set(3, 160)
@@ -64,8 +65,16 @@ camera.set(4, 120)
 
 while True:
     # Define both the lower and upper boundary of the ball tracking
-    greenLower = np.array([49, 110, 104])
-    greenUpper = np.array([180, 255, 255])
+
+    #Value without uvcdynctrl
+    #greenLower = np.array([49, 110, 104])
+    #greenUpper = np.array([180, 255, 255])
+
+    #Value with uvcdynctrl
+    greenLower = np.array([cv2.getTrackbarPos("Hue Lower", "Trackbars"), cv2.getTrackbarPos("Saturation Lower", "Trackbars"), cv2.getTrackbarPos("Value Lower", "Trackbars")])
+    greenUpper = np.array([cv2.getTrackbarPos("Hue Upper", "Trackbars"), cv2.getTrackbarPos("Saturation Upper", "Trackbars"), cv2.getTrackbarPos("Value Upper", "Trackbars")])
+
+    kernel = np.ones((5, 5), np.uint8)
 
     # Read the frame from the camera
     (grabbed, frame) = camera.read()
@@ -78,8 +87,8 @@ while True:
     mask_image = cv2.inRange(hsv_image, greenLower, greenUpper)
 
     # Erode and dilate the mask to remove blobs
-    mask = cv2.erode(mask_image, None, iterations=2)
-    mask_image = cv2.dilate(mask, None, iterations=2)
+    mask = cv2.erode(mask_image, kernel, iterations=1)
+    mask_image = cv2.dilate(mask, kernel, iterations=1)
 
     # Find the contour in the mask
     contours = cv2.findContours(mask_image.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
@@ -112,7 +121,7 @@ while True:
 
         a = get_angle(frame, first_largest_contour)
         if nt.isConnected() and a != 36 and a != 32.5:
-            nt.putNumber('angletogoal', a)
+            nt.putNumber('angletotarget', a)
 
     # Shows the image to the screen
     cv2.imshow("Frame", frame)
