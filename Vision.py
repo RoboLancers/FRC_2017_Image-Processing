@@ -33,7 +33,7 @@ def calculate_centroid(contour):
 
 
 def get_angle(frames, contour):
-    height, width = frames.shape
+    height, width, channel = frames.shape
     center_x, center_y = calculate_centroid(contour)
 
     pixel_offset = width / 2 - center_x
@@ -106,14 +106,13 @@ while True:
         if len(contours) > 1:
             # Find the nth largest contour [n-1][1] only if there is more than one contour
             second_largest_contour = sortedArray[1]
-            cv2.drawContours(frame, second_largest_contour, -1, (255, 0, 0), 2)
 
             if first_largest_contour is second_largest_contour:
                 print("Equal")
 
-            a = get_angle(frame, first_largest_contour)
-            if nt.isConnected() and a != 36 and a != 32.5:
-                nt.putNumber('angletogoal', a)
+        a = get_angle(frame, first_largest_contour)
+        if nt.isConnected() and a != 36 and a != 32.5:
+            nt.putNumber('angletogoal', a)
 
     # Shows the image to the screen
     cv2.imshow("Frame", frame)
