@@ -16,7 +16,7 @@ nt = NetworkTable.getTable('jetson')
 
 lancer_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 server_address = ('10.3.21.2', 10000)
-lancer_socket.connect(server_address)
+lancer_socket.connect((server_address, 5800))
 
 def do_nothing(x):
     pass
