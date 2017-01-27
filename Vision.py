@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 from networktables import NetworkTable
 import os
+import socket
 
 
 os.system("uvcdynctrl -s 'Exposure, Auto' 1")
@@ -12,6 +13,10 @@ NetworkTable.setClientMode()
 NetworkTable.initialize()
 
 nt = NetworkTable.getTable('jetson')
+
+lancer_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+server_address = ('10.3.21.2', 10000)
+lancer_socket.connect(server_address)
 
 def do_nothing(x):
     pass
@@ -120,6 +125,7 @@ while True:
                 print("Equal")
 
         a = get_angle(frame, first_largest_contour)
+        lancer_socket.sendall(str(a) + "\n")
         if nt.isConnected() and a != 36 and a != 32.5:
             nt.putNumber('angletotarget', a)
 
