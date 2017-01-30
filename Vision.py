@@ -1,7 +1,9 @@
-import cv2
+import cv2, sys
 import numpy as np
 from networktables import NetworkTable
 import os
+import re
+from urllib.request import urlopen
 
 
 os.system("uvcdynctrl -s 'Exposure, Auto' 3")
@@ -18,8 +20,8 @@ NetworkTable.initialize()
 
 nt = NetworkTable.getTable('jetson')
 
-def do_nothing(x):
-    pass
+#def do_nothing(x):
+    #pass
 
 '#Calculate the centroid of the contour'
 
@@ -68,6 +70,7 @@ def find_center(contour1, contour2):
 #cv2.createTrackbar("Value Upper", "Trackbars", 255, 255, do_nothing)
 
 camera = cv2.VideoCapture(0)
+
 #camera.set(3, 160)
 #camera.set(4, 120)
 
@@ -80,12 +83,11 @@ while True:
     greenUpper = np.array([137,225,255])
 
     # Read the frame from the camera
-    (grabbed, frame) = camera.read()
+    grabbed, frame = camera.read()
 
     # Process the image to get a mask
     # Convert the frame to the hsv colorspace
     hsv_image = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-
     # Creates a mask for the color green
     mask_image = cv2.inRange(hsv_image, greenLower, greenUpper)
 
@@ -128,10 +130,14 @@ while True:
         a = get_angle(frame, first_largest_contour)
         a = round(a, 2)
         average_middle = (a+b)/2
+        average_middle_string = str(average_middle)
         print(str(average_middle))
         #lancer_socket.sendall(str(a) + "\n")
         if nt.isConnected() and a != 36 and a != 32.5:
-            nt.putNumber('angletogoal', average_middle)
+            nt.putString('angletogoal', average_middle_string)
+    else:
+        if nt.isConnected():
+            nt.putString('angletogoal', "Not Detected")
 
     # Shows the image to the screen
     cv2.imshow("Frame", frame)
