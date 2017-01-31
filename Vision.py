@@ -1,156 +1,112 @@
-import cv2, sys
+import cv2
 import numpy as np
 from networktables import NetworkTable
 import os
-import re
-from urllib.request import urlopen
+from VisionUtils import *
 
 
-os.system("uvcdynctrl -s 'Exposure, Auto' 3")
-os.system("uvcdynctrl -s Brightness 62")
-os.system("uvcdynctrl -s Contrast 4")
-os.system("uvcdynctrl -s Saturation 79")
-os.system("uvcdynctrl -s 'White Balance Temperature, Auto' 0")
-os.system("uvcdynctrl -s 'White Balance Temperature' 4487")
-os.system("uvcdynctrl -s 'Sharpness' 25")
+'''Set up the lifecam manually'''
+setUpCamera()
 
-NetworkTable.setIPAddress('10.3.21.2')
-NetworkTable.setClientMode()
-NetworkTable.initialize()
+'''Setup the network table and assign it to nt'''
+nt = setUpNetworkTables()
 
-nt = NetworkTable.getTable('jetson')
-
-#def do_nothing(x):
-    #pass
-
-'#Calculate the centroid of the contour'
-
-
-def calculate_centroid(contour):
-    moment = cv2.moments(contour)
-    if moment["m00"] != 0:
-        center_x = int(moment["m10"] / moment["m00"])
-        center_y = int(moment["m01"] / moment["m00"])
-    else:
-        center_x = 0
-        center_y = 0
-
-    return center_x, center_y
-
-'#Find the angle to turn'
-
-
-def get_angle(frames, contour):
-    height, width, channel = frames.shape
-    center_x, center_y = calculate_centroid(contour)
-
-    pixel_offset = width / 2 - center_x
-    angle_offset = 73 * pixel_offset / width
-    angle_offset -= 3.5
-
-    return angle_offset
-
-def find_center(contour1, contour2):
-    center_x1, center_y1 = calculate_centroid(contour1)
-    center_x2, center_y2 = calculate_centroid(contour2)
-    return (center_x1 + center_x2) / 2
-
-
-'#Create a window for the trackbars'
-#cv2.namedWindow("Trackbars", cv2.WINDOW_NORMAL)
-
-'#Create trackbars to filter image'
-#cv2.createTrackbar("Hue Lower", "Trackbars", 0, 180, do_nothing)
-#cv2.createTrackbar("Hue Upper", "Trackbars", 180, 180, do_nothing)
-
-#cv2.createTrackbar("Saturation Lower", "Trackbars", 0, 255, do_nothing)
-#cv2.createTrackbar("Saturation Upper", "Trackbars", 255, 255, do_nothing)
-
-#cv2.createTrackbar("Value Lower", "Trackbars", 0, 255, do_nothing)
-#cv2.createTrackbar("Value Upper", "Trackbars", 255, 255, do_nothing)
+#setUpWindowsAndTrackbars()
 
 camera = cv2.VideoCapture(0)
 
+#Set size to be smaller
 #camera.set(3, 160)
 #camera.set(4, 120)
 
 while True:
-    # Define both the lower and upper boundary of the ball tracking
-    #Value with uvcdynctrl
-    #greenLower = np.array([cv2.getTrackbarPos("Hue Lower", "Trackbars"), cv2.getTrackbarPos("Saturation Lower", "Trackbars"), cv2.getTrackbarPos("Value Lower", "Trackbars")])
-    #greenUpper = np.array([cv2.getTrackbarPos("Hue Upper", "Trackbars"), cv2.getTrackbarPos("Saturation Upper", "Trackbars"), cv2.getTrackbarPos("Value Upper", "Trackbars")])
-    greenLower = np.array([48,103,135])
-    greenUpper = np.array([137,225,255])
+    '''Define both the lower and upper boundary of the ball tracking'''
+    greenLower = np.array([cv2.getTrackbarPos("Hue Lower", "Trackbars"), cv2.getTrackbarPos("Saturation Lower", "Trackbars"), cv2.getTrackbarPos("Value Lower", "Trackbars")])
+    greenUpper = np.array([cv2.getTrackbarPos("Hue Upper", "Trackbars"), cv2.getTrackbarPos("Saturation Upper", "Trackbars"), cv2.getTrackbarPos("Value Upper", "Trackbars")])
+    #greenLower = np.array([48,103,135])
+    #greenUpper = np.array([137,225,255])
 
-    # Read the frame from the camera
+    '''Read the frame from the camera'''
     grabbed, frame = camera.read()
 
-    # Process the image to get a mask
-    # Convert the frame to the hsv colorspace
-    hsv_image = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-    # Creates a mask for the color green
-    mask_image = cv2.inRange(hsv_image, greenLower, greenUpper)
+    mask = preprocessImage(frame, greenLower, greenUpper)
 
-    blurred_image = cv2.bilateralFilter(mask_image,9,75,75)
+    '''Find the contour in the mask'''
+    contours = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
 
-    # Erode and dilate the mask to remove blobs
-    mask = cv2.erode(mask_image, None, iterations=2)
-    mask_image = cv2.dilate(mask_image, None, iterations=2)
-
-    # Find the contour in the mask
-    contours = cv2.findContours(mask_image.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
-
-    # Create an array to hold all contour area
+    '''Create an array to hold all contour area'''
     area_array = []
 
-    # Only if we find a contour do we continue
+    '''Only if we find a contour do we continue'''
     if len(contours) > 0:
-        # Find the largest contour
+        '''Find the largest contour'''
         first_largest_contour = max(contours, key=cv2.contourArea)
 
-        # Draws the contours on the mask
+        '''Draws the contours on the mask'''
         cv2.drawContours(frame, first_largest_contour, -1, (255, 0, 0), 2)
 
-        # Fill the array with contour areas
+        '''Fill the array with contour areas'''
         for i, j in enumerate(contours):
             area = cv2.contourArea(j)
             area_array.append(area)
 
-        # Sort the array based on contour area
+        '''Sort the array based on contour area'''
         sortedArray = sorted(zip(area_array, contours), key=lambda x: x[0], reverse=True)
-        b = 0
 
+        '''Set the angle to targets to be 0 initially'''
+        angletofirsttarget = 0
+        angletosecondtarget = 0
+
+        '''Find the angle to first target'''
+        angletofirsttarget = get_angle(frame, first_largest_contour)
+
+        '''Round it to 2 decimal places for easier computation'''
+        angletofirsttarget = round(angletofirsttarget, 2)
+
+        '''Checks to see if we have 2 contours'''
         if len(contours) > 1:
-            # Find the nth largest contour [n-1][1] only if there is more than one contour
-            second_largest_contour = sortedArray[1][1]
-            cv2.drawContours(frame, second_largest_contour, -1, (255,0,0), 2)
-            b = get_angle(frame, second_largest_contour)
-            b = round(b, 2)
 
-        a = get_angle(frame, first_largest_contour)
-        a = round(a, 2)
-        average_middle = (a+b)/2
-        average_middle_string = str(average_middle)
-        print(str(average_middle))
-        #lancer_socket.sendall(str(a) + "\n")
-        if nt.isConnected() and a != 36 and a != 32.5:
+            '''Find the nth largest contour [n-1][1] only if there is more than one contour
+               So here we find the second largest'''
+            second_largest_contour = sortedArray[1][1]
+
+            '''Draw the contour on the frame'''
+            cv2.drawContours(frame, second_largest_contour, -1, (255,0,0), 2)
+
+            '''Calculate the angle to the second target'''
+            angletosecondtarget = get_angle(frame, second_largest_contour)
+
+            '''Round the angle to 2 decimal places for easier computation'''
+            angletosecondtarget = round(angletosecondtarget, 2)
+
+        '''Calculate the middle by finding the mean'''
+        average_angle_to_middle = (angletofirsttarget + angletosecondtarget)/2
+
+        '''Convert it to a string to print'''
+        average_middle_string = str(average_angle_to_middle)
+
+        '''Prints the angle'''
+        print(average_middle_string)
+
+        '''Checks to see if network table is connected'''
+        if nt.isConnected() and average_angle_to_middle != 36 and average_angle_to_middle != 32.5:
+            '''If it is then we put the angle as a string'''
             nt.putString('angletogoal', average_middle_string)
     else:
+        '''Checks to see if network table is connected'''
         if nt.isConnected():
+            '''If no contour is detected then we put not detected'''
             nt.putString('angletogoal', "Not Detected")
 
-    # Shows the image to the screen
+    '''Shows the images to the screen'''
     cv2.imshow("Frame", frame)
-    cv2.imshow("Mask Frame", mask_image)
+    cv2.imshow("Mask Frame", mask)
 
-    # nt.putNumber("First Angle to Turn", angle_to_bigger_target)
-
+    '''If q key is pressed then we quit'''
     key = cv2.waitKey(1) & 0xFF
-
-    # If q key is pressed then we quit
     if key == ord("q"):
         break
 
-# Clean up the camera and close all windows
+'''Clean up the camera and close all windows'''
 camera.release()
 cv2.destroyAllWindows()
