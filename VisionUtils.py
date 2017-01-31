@@ -1,30 +1,4 @@
 import cv2
-import os
-from networktables import NetworkTable
-import re
-
-'''Required for trackbars'''
-def do_nothing(x):
-    pass
-
-def setUpCamera():
-    '''Sets all the camera values manually'''
-    os.system("uvcdynctrl -s 'Exposure, Auto' 3")
-    os.system("uvcdynctrl -s Brightness 62")
-    os.system("uvcdynctrl -s Contrast 4")
-    os.system("uvcdynctrl -s Saturation 79")
-    os.system("uvcdynctrl -s 'White Balance Temperature, Auto' 0")
-    os.system("uvcdynctrl -s 'White Balance Temperature' 4487")
-    os.system("uvcdynctrl -s 'Sharpness' 25")
-
-def setUpNetworkTables():
-    '''Start network tables and connect to roboRio'''
-    NetworkTable.setIPAddress('10.3.21.2')
-    NetworkTable.setClientMode()
-    NetworkTable.initialize()
-
-    '''Gets the table called jetson'''
-    return NetworkTable.getTable('jetson')
 
 '''Calculate the centroid of the contour'''
 def calculate_centroid(contour):
@@ -55,21 +29,6 @@ def find_center(contour1, contour2):
     center_x2, center_y2 = calculate_centroid(contour2)
     return (center_x1 + center_x2) / 2
 
-'''Set up windows and trackbars'''
-def setUpWindowsAndTrackbars():
-    '''Create a window for the trackbars'''
-    cv2.namedWindow("Trackbars", cv2.WINDOW_NORMAL)
-
-    '''Create trackbars to filter image'''
-    cv2.createTrackbar("Hue Lower", "Trackbars", 0, 180, do_nothing)
-    cv2.createTrackbar("Hue Upper", "Trackbars", 180, 180, do_nothing)
-
-    cv2.createTrackbar("Saturation Lower", "Trackbars", 0, 255, do_nothing)
-    cv2.createTrackbar("Saturation Upper", "Trackbars", 255, 255, do_nothing)
-
-    cv2.createTrackbar("Value Lower", "Trackbars", 0, 255, do_nothing)
-    cv2.createTrackbar("Value Upper", "Trackbars", 255, 255, do_nothing)
-
 def preprocessImage(image, greenLower, greenUpper):
     '''Convert the frame to the hsv color-space'''
     hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
@@ -85,3 +44,32 @@ def preprocessImage(image, greenLower, greenUpper):
     mask = cv2.dilate(mask, None, iterations=2)
 
     return mask
+
+
+def findAndSortContourArea(contours):
+    area_array = []
+
+    '''Fill the array with contour areas'''
+    for i, j in enumerate(contours):
+        area = cv2.contourArea(j)
+        area_array.append(area)
+
+    '''Sort the array based on contour area'''
+    sortedArray = sorted(zip(area_array, contours), key=lambda x: x[0], reverse=True)
+
+    return sortedArray
+
+
+def calculateAngleToCenterOfContour(frameForAngle, firstLargestContour, secondLargestContour):
+    '''Find the angle to first target and round it'''
+    angletofirsttarget = get_angle(frameForAngle, firstLargestContour)
+    angletofirsttarget = round(angletofirsttarget, 2)
+
+    '''Calculate the angle to the second target'''
+    angletosecondtarget = get_angle(frameForAngle, secondLargestContour)
+    angletosecondtarget = round(angletosecondtarget, 2)
+
+    '''Calculate the middle by finding the mean'''
+    angle_to_middle = (angletofirsttarget + angletosecondtarget) / 2
+
+    return angle_to_middle
