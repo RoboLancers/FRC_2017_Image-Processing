@@ -1,4 +1,5 @@
 from threading import Thread
+from SetupUtil import *
 
 import cv2
 
@@ -6,6 +7,7 @@ import cv2
 class MultithreadVideoStream:
     def __init__(self, src=0):
         '''Initialize and read camera stream'''
+        setUpCamera()
         self.stream = cv2.VideoCapture(src)
         (self.grabbed, self.frame) = self.stream.read()
 
@@ -34,3 +36,6 @@ class MultithreadVideoStream:
     def stop(self):
         '''If thread should be stopped'''
         self.stopped = True
+
+    def release(self):
+        self.stream.release()

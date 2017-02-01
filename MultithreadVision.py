@@ -11,10 +11,16 @@ args = parsearguments()
 
 nt = setUpNetworkTables()
 
-greenLower = np.array([48, 103, 135])
-greenUpper = np.array([137, 225, 255])
+#setUpWindowsAndTrackbars()
+
+greenLower = np.array([50, 80, 70])
+greenUpper = np.array([120, 225, 255])
 
 while True:
+
+    #greenLower = np.array([cv2.getTrackbarPos("huelower", "Trackbars"), cv2.getTrackbarPos("satlower", "Trackbars"), cv2.getTrackbarPos("vallower", "Trackbars")])
+    #greenUpper = np.array([cv2.getTrackbarPos("hueupper", "Trackbars"), cv2.getTrackbarPos("satupper", "Trackbars"), cv2.getTrackbarPos("valupper", "Trackbars")])
+
     '''Read frame from thread camera'''
     frame = camera.read()
 
@@ -40,22 +46,24 @@ while True:
 
         average_angle_to_middle = calculateAngleToCenterOfContour(frame, first_largest_contour,
                                                                   second_largest_contour)
+        if args["printangle"] > 0:
+            print(str(average_angle_to_middle))
+
         average_middle_string = str(average_angle_to_middle)
-
-        if args["display"] > 0:
-            '''Shows the images to the screen'''
-            cv2.imshow("Frame", frame)
-            cv2.imshow("Mask Frame", mask)
-
-            if checkkeypressed():
-                break
 
         if average_angle_to_middle != 36 and average_angle_to_middle != 32.5:
             putInNetworkTable(nt, 'angletogoal', average_middle_string)
     else:
         putInNetworkTable(nt, 'angletogoal', 'Not Detected')
 
+    if args["display"] > 0:
+        '''Shows the images to the screen'''
+        cv2.imshow("Frame", frame)
+        cv2.imshow("Mask Frame", mask)
+
+        if checkkeypressed():
+            break
+
 '''Clean up the camera and close all windows'''
-writeHSV()
 camera.release()
 cv2.destroyAllWindows()

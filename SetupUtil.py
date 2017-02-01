@@ -1,13 +1,10 @@
 import argparse
-import csv
 import os
 
 import cv2
 from networktables import NetworkTable
 
 '''Required for trackbars'''
-
-
 def do_nothing(x):
     pass
 
@@ -47,58 +44,23 @@ def putInNetworkTable(networkTable, key, value):
     if networkTable.isConnected():
         networkTable.putString(key, value)
 
-
-def readHSV():
-    with open('HsvValues.csv') as csvfile:
-        readCSV = csv.reader(csvfile, delimiter='=')
-
-        keys = []
-        values = []
-
-        for row in readCSV:
-            key = row[0]
-            value = row[1]
-
-            keys.append(key)
-            values.append(value)
-
-    return keys, values
-
-
-'''Set up windows and trackbars'''
-
-
-def setUpWindowsAndTrackbars():
-    key, value = readHSV()
-
-    '''Create a window for the trackbars'''
-    cv2.namedWindow("Trackbars", cv2.WINDOW_NORMAL)
-
-    '''Create trackbars to filter image'''
-    cv2.createTrackbar("huelower", "Trackbars", int(value[key.index('huelower')]), 180, do_nothing)
-    cv2.createTrackbar("hueupper", "Trackbars", int(value[key.index('hueupper')]), 180, do_nothing)
-
-    cv2.createTrackbar("huelower", "Trackbars", int(value[key.index('satlower')]), 255, do_nothing)
-    cv2.createTrackbar("hueupper", "Trackbars", int(value[key.index('satupper')]), 255, do_nothing)
-
-    cv2.createTrackbar("vallower", "Trackbars", int(value[key.index('vallower')]), 255, do_nothing)
-    cv2.createTrackbar("valupper", "Trackbars", int(value[key.index('valupper')]), 255, do_nothing)
-
-
-def writeHSV():
-    key, value = readHSV()
-
-    print(key)
-
-    with open('HsvValues.csv', mode='w') as csvfile:
-        writeCSV = csv.writer(csvfile, delimiter='=')
-
-        for string in key:
-            writeCSV.writerow(string + '=' + cv2.getTrackbarPos(string, "Trackbars"))
-
-
 def checkkeypressed():
     '''If q key is pressed then we quit'''
     key = cv2.waitKey(1) & 0xFF
     if key == ord("q"):
         return True
+
+def setUpWindowsAndTrackbars():
+
+    '''Create a window for the trackbars'''
+    cv2.namedWindow("Trackbars", cv2.WINDOW_NORMAL)
+
+    '''Create trackbars to filter image'''
+    cv2.createTrackbar("huelower", "Trackbars", 0, 180, do_nothing)
+    cv2.createTrackbar("hueupper", "Trackbars", 180, 180, do_nothing)
+
+    cv2.createTrackbar("satlower", "Trackbars", 0, 255, do_nothing)
+    cv2.createTrackbar("satupper", "Trackbars", 255, 255, do_nothing)
+
+    cv2.createTrackbar("vallower", "Trackbars", 0, 255, do_nothing)
+    cv2.createTrackbar("valupper", "Trackbars", 255, 255, do_nothing)

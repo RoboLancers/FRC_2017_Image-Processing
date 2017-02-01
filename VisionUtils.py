@@ -1,4 +1,5 @@
 import cv2
+import math
 
 '''Calculate the centroid of the contour'''
 def calculate_centroid(contour):
@@ -40,7 +41,7 @@ def preprocessImage(image, greenLower, greenUpper):
     blurred_image = cv2.bilateralFilter(mask,9,75,75)
 
     '''Erode and dilate the mask to remove blobs'''
-    mask = cv2.erode(mask, None, iterations=2)
+    mask = cv2.erode(blurred_image, None, iterations=2)
     mask = cv2.dilate(mask, None, iterations=2)
 
     return mask
