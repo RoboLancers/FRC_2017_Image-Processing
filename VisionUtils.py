@@ -1,5 +1,5 @@
 import cv2
-import math
+import numpy as np
 
 '''Calculate the centroid of the contour'''
 def calculate_centroid(contour):
@@ -34,15 +34,20 @@ def preprocessImage(image, greenLower, greenUpper):
     '''Convert the frame to the hsv color-space'''
     hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
-    '''Creates a mask for the color green'''
-    mask = cv2.inRange(hsv_image, greenLower, greenUpper)
+    blurred_image = cv2.bilateralFilter(hsv_image, 9, 75, 75)
 
-    '''Blurs the image for easier filtering and less noise'''
-    blurred_image = cv2.bilateralFilter(mask,9,75,75)
+    '''Creates a mask for the color green'''
+    mask = cv2.inRange(blurred_image, greenLower, greenUpper)
+
+    kernel = np.ones((5, 5), np.uint8)
+
+    maskRemoveNoise = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
+
+    maskCloseHoles = cv2.morphologyEx(maskRemoveNoise, cv2.MORPH_CLOSE, kernel)
 
     '''Erode and dilate the mask to remove blobs'''
-    mask = cv2.erode(blurred_image, None, iterations=2)
-    mask = cv2.dilate(mask, None, iterations=2)
+    mask = cv2.erode(maskCloseHoles, kernel, iterations=2)
+    mask = cv2.dilate(mask, kernel, iterations=3)
 
     return mask
 
@@ -74,3 +79,12 @@ def calculateAngleToCenterOfContour(frameForAngle, firstLargestContour, secondLa
     angle_to_middle = (angletofirsttarget + angletosecondtarget) / 2
 
     return angle_to_middle
+
+def aspectRatioOfGear(w, h):
+    ''' returns true if the rectangle is
+    of the correct aspect ratio and false if not.'''
+    return w / h >= 1.5 / 5 and w / h <= 3.5 / 5
+
+def percentFilled(w, h, cnt):
+    ''' returns if the contour occupies at least 70% of the area of it's bounding rectangle '''
+    return cv2.contourArea(cnt) >= 0.7 * w * h

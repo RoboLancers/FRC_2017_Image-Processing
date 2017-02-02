@@ -1,7 +1,8 @@
 import argparse
 import os
-
+import csv
 import cv2
+
 from networktables import NetworkTable
 
 '''Required for trackbars'''
@@ -52,15 +53,30 @@ def checkkeypressed():
 
 def setUpWindowsAndTrackbars():
 
+    allValues = readHSV()
+
     '''Create a window for the trackbars'''
     cv2.namedWindow("Trackbars", cv2.WINDOW_NORMAL)
 
     '''Create trackbars to filter image'''
-    cv2.createTrackbar("huelower", "Trackbars", 0, 180, do_nothing)
-    cv2.createTrackbar("hueupper", "Trackbars", 180, 180, do_nothing)
+    for row in allValues:
+        cv2.createTrackbar(row[0], "Trackbars", int(row[1]), 255, do_nothing)
 
-    cv2.createTrackbar("satlower", "Trackbars", 0, 255, do_nothing)
-    cv2.createTrackbar("satupper", "Trackbars", 255, 255, do_nothing)
+def readHSV():
+    allValues = []
 
-    cv2.createTrackbar("vallower", "Trackbars", 0, 255, do_nothing)
-    cv2.createTrackbar("valupper", "Trackbars", 255, 255, do_nothing)
+    with open('HsvValues.csv', 'r') as file:
+        reader = csv.reader(file)
+        for row in reader:
+            allValues.append(row)
+
+    return allValues
+
+def writeHSV():
+    allValues = readHSV()
+
+    with open('HsvValues.csv', 'w') as file:
+        writer = csv.writer(file)
+
+        for row in allValues:
+            writer.writerow((row[0], cv2.getTrackbarPos(row[0], "Trackbars")))

@@ -33,9 +33,6 @@ class MultithreadVideoStream:
         '''Return most recent frame'''
         return self.frame
 
-    def stop(self):
-        '''If thread should be stopped'''
-        self.stopped = True
-
     def release(self):
         self.stream.release()
+        self.stopped = True
