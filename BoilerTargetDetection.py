@@ -18,10 +18,14 @@ setUpWindowsAndTrackbars()
 
 MIN_PERIMETER = 50
 
+focal_length = 887.9928588867188
+
 while True:
 
     greenLower = np.array([cv2.getTrackbarPos("huelower", "Trackbars"), cv2.getTrackbarPos("satlower", "Trackbars"), cv2.getTrackbarPos("vallower", "Trackbars")])
     greenUpper = np.array([cv2.getTrackbarPos("hueupper", "Trackbars"), cv2.getTrackbarPos("satupper", "Trackbars"), cv2.getTrackbarPos("valupper", "Trackbars")])
+
+
 
     '''Read frame from thread camera'''
     frame = camera.read()
@@ -52,8 +56,9 @@ while True:
         x, y, w, h = cv2.boundingRect(first_largest_contour)
         x1, y1, w1, h1 = cv2.boundingRect(second_largest_contour)
 
-        if (aspectRatioOfGear(w, h)  or aspectRatioOfGear(w1, h1)):
+        if (w > h and w1 > h1):
             print("Boiler")
+            print(distance_to_camera(0.1016,focal_length,w))
 
     else:
         putInNetworkTable(nt, 'Angle to Boiler', 'Not Detected')

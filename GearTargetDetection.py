@@ -52,7 +52,7 @@ while True:
         x, y, w, h = cv2.boundingRect(first_largest_contour)
         x1, y1, w1, h1 = cv2.boundingRect(second_largest_contour)
 
-        if w > h and w1 > h1:
+        if aspectRatioOfGear(w,h) and aspectRatioOfGear(w1, h1):
             average_angle_to_middle = calculateAngleToCenterOfContour(frame, first_largest_contour,
                                                                   second_largest_contour)
             if args["printangle"] > 0:

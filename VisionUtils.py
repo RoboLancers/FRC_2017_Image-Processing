@@ -14,13 +14,12 @@ def calculate_centroid(contour):
     return center_x, center_y
 
 '''Find the angle to turn'''
-def get_angle(frames, contour):
+def get_angle_gear(frames, contour):
     height, width, channel = frames.shape
     center_x, center_y = calculate_centroid(contour)
 
     pixel_offset = width / 2 - center_x
     angle_offset = 73 * pixel_offset / width
-    angle_offset -= 3.5
 
     return angle_offset
 
@@ -68,11 +67,11 @@ def findAndSortContourArea(contours):
 
 def calculateAngleToCenterOfContour(frameForAngle, firstLargestContour, secondLargestContour):
     '''Find the angle to first target and round it'''
-    angletofirsttarget = get_angle(frameForAngle, firstLargestContour)
+    angletofirsttarget = get_angle_gear(frameForAngle, firstLargestContour)
     angletofirsttarget = round(angletofirsttarget, 2)
 
     '''Calculate the angle to the second target'''
-    angletosecondtarget = get_angle(frameForAngle, secondLargestContour)
+    angletosecondtarget = get_angle_gear(frameForAngle, secondLargestContour)
     angletosecondtarget = round(angletosecondtarget, 2)
 
     '''Calculate the middle by finding the mean'''
@@ -88,3 +87,7 @@ def aspectRatioOfGear(w, h):
 def percentFilled(w, h, cnt):
     ''' returns if the contour occupies at least 70% of the area of it's bounding rectangle '''
     return cv2.contourArea(cnt) >= 0.7 * w * h
+
+def distance_to_camera(knownWidth, focalLength, perWidth):
+	# compute and return the distance from the maker to the camera
+	return (knownWidth * focalLength) / perWidth
