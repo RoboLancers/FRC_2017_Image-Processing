@@ -10,12 +10,6 @@ class MultithreadVideoStream:
         setUpCamera(src)
         self.stream = cv2.VideoCapture(src)
 
-        #self.stream.set(3, 160)
-        #self.stream.set(4, 120)
-
-        self.stream.set(3, 240)
-        self.stream.set(4, 180)
-
         (self.grabbed, self.frame) = self.stream.read()
 
         '''Used to indicate if thread should be stopped'''

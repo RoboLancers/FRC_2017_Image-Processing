@@ -1,3 +1,4 @@
+import urllib
 import numpy as np
 
 from MultithreadVideoStream import MultithreadVideoStream
@@ -5,10 +6,16 @@ from SetupUtil import *
 from VisionUtils import *
 
 
-setUpCamera(devicePort=0)
+def polygon(c, epsil):
+    """Remove concavities from a contour and turn it into a polygon."""
+    hull = cv2.convexHull(c)
+    epsilon = epsil * cv2.arcLength(hull, True)
+    goal = cv2.approxPolyDP(hull, epsilon, True)
+    return goal
 
 '''Create threaded video stream'''
-camera = MultithreadVideoStream(src=0).start()
+#camera = MultithreadVideoStream('http://10.3.21.2:1180/?action=stream').start()
+camera = MultithreadVideoStream(0).start()
 
 args = parsearguments()
 
@@ -51,12 +58,26 @@ while True:
            So here we find the second largest'''
         second_largest_contour = sortArray[1][1]
 
+        goal = polygon(first_largest_contour, 0.01)
+
+        cv2.drawContours(mask, [goal], 0, (255, 0, 0), 5)
+
+        ellipse = cv2.fitEllipse(first_largest_contour)
+        cv2.ellipse(frame, ellipse, (0, 255, 0), 2)
+
+        (x, y), radius = cv2.minEnclosingCircle(first_largest_contour)
+        center = (int(x), int(y))
+        radius = int(radius)
+        cv2.circle(frame, center, radius, (0, 255, 0), 2)
+
         x, y, w, h = cv2.boundingRect(first_largest_contour)
         x1, y1, w1, h1 = cv2.boundingRect(second_largest_contour)
 
+        cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
+
         if (w > h and w1 > h1):
             print("Boiler")
-            print(distance_to_camera(0.1016,focal_length,w))
+            print(str(distance_to_camera(4, h)))
 
     else:
         putInNetworkTable(nt, 'Angle to Boiler', 'Not Detected')
@@ -70,5 +91,5 @@ while True:
             break
 
 '''Clean up the camera and close all windows'''
-camera.release()
+#camera.release()
 cv2.destroyAllWindows()

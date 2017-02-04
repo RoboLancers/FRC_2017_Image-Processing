@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import math
 
 '''Calculate the centroid of the contour'''
 def calculate_centroid(contour):
@@ -88,6 +89,10 @@ def percentFilled(w, h, cnt):
     ''' returns if the contour occupies at least 70% of the area of it's bounding rectangle '''
     return cv2.contourArea(cnt) >= 0.7 * w * h
 
-def distance_to_camera(knownWidth, focalLength, perWidth):
-	# compute and return the distance from the maker to the camera
-	return (knownWidth * focalLength) / perWidth
+def distance_to_camera(knownHeight, y):
+    # compute and return the distance from the maker to the camera
+    # d = x * R / (2 n tan(a / 2) )
+    distance = (24 - 0) / math.tan((y * 67 / 2.0 + 40) * math.pi / 180)
+    #return knownHeight * 480/ (2 * perHeight * math.tan(35.6 / 2))
+    return distance
+

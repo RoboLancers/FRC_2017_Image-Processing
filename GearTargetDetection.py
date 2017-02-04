@@ -5,10 +5,8 @@ from SetupUtil import *
 from VisionUtils import *
 
 
-setUpCamera(devicePort=1)
-
 '''Create threaded video stream'''
-camera = MultithreadVideoStream(src=1).start()
+camera = MultithreadVideoStream(src=0).start()
 
 args = parsearguments()
 
