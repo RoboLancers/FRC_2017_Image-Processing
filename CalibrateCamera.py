@@ -9,7 +9,7 @@ import numpy as np
 def do_nothing(x):
     pass
 
-setUpCamera()
+setUpCamera(devicePort=0)
 
 camera = MultithreadVideoStream(src=0).start()
 

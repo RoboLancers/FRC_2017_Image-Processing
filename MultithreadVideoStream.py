@@ -7,8 +7,15 @@ import cv2
 class MultithreadVideoStream:
     def __init__(self, src=0):
         '''Initialize and read camera stream'''
-        setUpCamera()
+        setUpCamera(src)
         self.stream = cv2.VideoCapture(src)
+
+        #self.stream.set(3, 160)
+        #self.stream.set(4, 120)
+
+        self.stream.set(3, 240)
+        self.stream.set(4, 180)
+
         (self.grabbed, self.frame) = self.stream.read()
 
         '''Used to indicate if thread should be stopped'''
@@ -36,3 +43,6 @@ class MultithreadVideoStream:
     def release(self):
         self.stream.release()
         self.stopped = True
+
+    def isOpened(self):
+        return self.isOpened()

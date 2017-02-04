@@ -20,15 +20,15 @@ def parsearguments():
     return vars(ap.parse_args())
 
 
-def setUpCamera():
+def setUpCamera(devicePort):
     '''Sets all the camera values manually'''
-    os.system("uvcdynctrl -s 'Exposure, Auto' 3")
-    os.system("uvcdynctrl -s Brightness 62")
-    os.system("uvcdynctrl -s Contrast 4")
-    os.system("uvcdynctrl -s Saturation 79")
-    os.system("uvcdynctrl -s 'White Balance Temperature, Auto' 0")
-    os.system("uvcdynctrl -s 'White Balance Temperature' 4487")
-    os.system("uvcdynctrl -s 'Sharpness' 25")
+    os.system("uvcdynctrl -s 'Exposure, Auto' 3 -d video" + str(devicePort))
+    os.system("uvcdynctrl -s Brightness 62 -d video" + str(devicePort))
+    os.system("uvcdynctrl -s Contrast 4 -d video" + str(devicePort))
+    os.system("uvcdynctrl -s Saturation 79 -d video" + str(devicePort))
+    os.system("uvcdynctrl -s 'White Balance Temperature, Auto' 0 -d video" + str(devicePort))
+    os.system("uvcdynctrl -s 'White Balance Temperature' 4487 -d video" + str(devicePort))
+    os.system("uvcdynctrl -s 'Sharpness' 25 -d video" + str(devicePort))
 
 
 def setUpNetworkTables():

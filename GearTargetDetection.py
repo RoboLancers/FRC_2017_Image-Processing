@@ -5,23 +5,23 @@ from SetupUtil import *
 from VisionUtils import *
 
 
-setUpCamera()
+setUpCamera(devicePort=1)
 
 '''Create threaded video stream'''
-camera = MultithreadVideoStream(src=0).start()
+camera = MultithreadVideoStream(src=1).start()
 
 args = parsearguments()
 
 nt = setUpNetworkTables()
 
-setUpWindowsAndTrackbars()
-
 MIN_PERIMETER = 50
+
+hsv_values = readHSV()
 
 while True:
 
-    greenLower = np.array([cv2.getTrackbarPos("huelower", "Trackbars"), cv2.getTrackbarPos("satlower", "Trackbars"), cv2.getTrackbarPos("vallower", "Trackbars")])
-    greenUpper = np.array([cv2.getTrackbarPos("hueupper", "Trackbars"), cv2.getTrackbarPos("satupper", "Trackbars"), cv2.getTrackbarPos("valupper", "Trackbars")])
+    greenLower = np.array([int(hsv_values[0][1]), int(hsv_values[2][1]), int(hsv_values[4][1])])
+    greenUpper = np.array([int(hsv_values[1][1]), int(hsv_values[3][1]), int(hsv_values[5][1])])
 
     '''Read frame from thread camera'''
     frame = camera.read()

@@ -38,7 +38,7 @@ def preprocessImage(image, greenLower, greenUpper):
     '''Creates a mask for the color green'''
     mask = cv2.inRange(blurred_image, greenLower, greenUpper)
 
-    kernel = np.ones((5, 5), np.uint8)
+    kernel = np.ones((3, 3), np.uint8)
 
     maskRemoveNoise = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
 
@@ -46,7 +46,7 @@ def preprocessImage(image, greenLower, greenUpper):
 
     '''Erode and dilate the mask to remove blobs'''
     mask = cv2.erode(maskCloseHoles, kernel, iterations=2)
-    mask = cv2.dilate(mask, kernel, iterations=3)
+    mask = cv2.dilate(mask, kernel, iterations=2)
 
     return mask
 
