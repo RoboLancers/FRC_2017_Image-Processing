@@ -1,4 +1,5 @@
 import numpy as np
+import sys
 
 from MultithreadVideoStream import MultithreadVideoStream
 from SetupUtil import *
@@ -6,7 +7,11 @@ from VisionUtils import *
 
 
 '''Create threaded video stream'''
+
 camera = MultithreadVideoStream(src=0).start()
+
+
+
 
 args = parsearguments()
 
@@ -16,6 +21,7 @@ MIN_PERIMETER = 50
 
 hsv_values = readHSV()
 
+
 while True:
 
     greenLower = np.array([int(hsv_values[0][1]), int(hsv_values[2][1]), int(hsv_values[4][1])])
@@ -23,12 +29,13 @@ while True:
 
     '''Read frame from thread camera'''
     frame = camera.read()
-
-    '''Copy the frame just in case'''
-    frameCopy = frame.copy()
+        
+    while frame is None:
+        print("Trying")
+        frame = camera.read()
 
     '''Process the image to get a mask'''
-    mask = preprocessImage(frameCopy, greenLower, greenUpper)
+    mask = preprocessImage(frame, greenLower, greenUpper)
 
     '''Find the contour in the mask'''
     contours = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
@@ -59,9 +66,9 @@ while True:
             average_middle_string = str(average_angle_to_middle)
 
             if average_angle_to_middle != 36 and average_angle_to_middle != 32.5:
-                putInNetworkTable(nt, 'Angle to Gear', average_middle_string)
+                putInNetworkTable(nt, 'Angle To Gear', average_middle_string)
     else:
-        putInNetworkTable(nt, 'angletogoal', 'Not Detected')
+        putInNetworkTable(nt, 'Angle To Gear', 'Not Detected')
 
     if args["display"] > 0:
         '''Shows the images to the screen'''

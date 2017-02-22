@@ -2,10 +2,12 @@ import cv2
 import numpy as np
 import math
 
+
+tiltAngle = 0
 '''Calculate the centroid of the contour'''
 def calculate_centroid(contour):
     moment = cv2.moments(contour)
-    if moment["m00"] != 0:
+    if moment["m00"] > 0:
         center_x = int(moment["m10"] / moment["m00"])
         center_y = int(moment["m01"] / moment["m00"])
     else:
@@ -40,10 +42,11 @@ def preprocessImage(image, greenLower, greenUpper):
     mask = cv2.inRange(blurred_image, greenLower, greenUpper)
 
     kernel = np.ones((3, 3), np.uint8)
+    #kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (2,2), anchor=1)
 
     maskRemoveNoise = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
 
-    maskCloseHoles = cv2.morphologyEx(maskRemoveNoise, cv2.MORPH_CLOSE, kernel)
+    maskCloseHoles = cv2.morphologyEx(maskRemoveNoise, cv2.MORPH_CLOSE, kernel, iterations=2)
 
     '''Erode and dilate the mask to remove blobs'''
     mask = cv2.erode(maskCloseHoles, kernel, iterations=2)
@@ -89,10 +92,17 @@ def percentFilled(w, h, cnt):
     ''' returns if the contour occupies at least 70% of the area of it's bounding rectangle '''
     return cv2.contourArea(cnt) >= 0.7 * w * h
 
-def distance_to_camera(knownHeight, y):
-    # compute and return the distance from the maker to the camera
-    # d = x * R / (2 n tan(a / 2) )
-    distance = (24 - 0) / math.tan((y * 67 / 2.0 + 40) * math.pi / 180)
-    #return knownHeight * 480/ (2 * perHeight * math.tan(35.6 / 2))
+def find_distance(x1,y1,x2,y2):
+    root = math.sqrt(  ((x2 - x1) ** 2) + ((y2 - y1) ** 2)  )
+    rootInt = int(root)
+    return rootInt
+
+def findDistanceToTarget(width):
+    # note that the width is multiplied by 2 because of resolution change on the image
+    # this change allows the new resolution to fit with the correct model
+    distance = (44.139 * math.exp((-0.012 * (2 * width)))) + 1 - float((tiltAngle / 10))
     return distance
 
+def findAngle(distance):
+    angle = (.1183*(distance **2 ) - (3.468 * distance) + 69.203)
+    return angle

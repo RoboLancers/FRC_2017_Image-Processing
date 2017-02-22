@@ -2,6 +2,7 @@ import argparse
 import os
 import csv
 import cv2
+import time
 
 from networktables import NetworkTable
 
@@ -38,7 +39,14 @@ def setUpNetworkTables():
     NetworkTable.initialize()
 
     '''Gets the table called jetson'''
-    return NetworkTable.getTable('jetson')
+    nt =  NetworkTable.getTable('jetson')
+
+    while not nt.isConnected():
+        time.sleep(.1)
+
+    print('Connected to network tables')
+
+    return nt
 
 
 def putInNetworkTable(networkTable, key, value):
