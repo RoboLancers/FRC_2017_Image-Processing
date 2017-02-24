@@ -41,8 +41,8 @@ def setUpNetworkTables():
     '''Gets the table called jetson'''
     nt =  NetworkTable.getTable('jetson')
 
-    while not nt.isConnected():
-        time.sleep(.1)
+    #while not nt.isConnected():
+        #time.sleep(.1)
 
     print('Connected to network tables')
 

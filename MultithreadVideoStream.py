@@ -8,7 +8,7 @@ class MultithreadVideoStream:
     def __init__(self, src=0):
 
         '''Initialize and read camera stream'''
-        #setUpCamera(src)
+        setUpCamera(src)
         self.stream = cv2.VideoCapture()
 
      
