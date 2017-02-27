@@ -1,13 +1,13 @@
 import argparse
-import os
 import csv
-import cv2
-import time
+import os
 
+import cv2
 from networktables import NetworkTable
 
 
-def do_nothing():
+# noinspection PyUnusedLocal
+def do_nothing(x):
     pass
 
 

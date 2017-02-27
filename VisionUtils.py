@@ -1,9 +1,10 @@
-import cv2
-import numpy as np
 import math
 
+import cv2
+import numpy as np
+
 BOILER_HEIGHT = 88.5
-CAMERA_HEIGHT = 21.5
+CAMERA_HEIGHT = 31.5  # 21.5
 
 
 def calculate_centroid(contour):
@@ -26,6 +27,7 @@ def get_angle_to_gear(frames, contour):
     angle_offset = 73 * pixel_offset / width
 
     return angle_offset
+
 
 def find_center(contour1, contour2):
     center_x1, center_y1 = calculate_centroid(contour1)

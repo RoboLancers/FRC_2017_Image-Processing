@@ -1,15 +1,8 @@
-import cv2
-from SetupUtil import *
 from MultithreadVideoStream import MultithreadVideoStream
+from SetupUtil import *
 from VisionUtils import *
-import numpy as np
 
-
-'''Required for trackbars'''
-def do_nothing(x):
-    pass
-
-setUpCamera(devicePort=0)
+setUpCamera(device_port=0)
 
 camera = MultithreadVideoStream(src=0).start()
 

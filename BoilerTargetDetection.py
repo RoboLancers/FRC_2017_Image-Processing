@@ -12,8 +12,6 @@ nt = setUpNetworkTables()
 
 MIN_PERIMETER = 50
 
-focal_length = 887.9928588867188
-
 hsv_values = readHSV()
 
 while True:
@@ -53,14 +51,18 @@ while True:
         if w > h and w1 > h1:
             degrees = degreesAboveCamera(y)
             distance = distanceFromBoilerCamera(degrees)
+            angle = get_angle_to_gear(frame, first_largest_contour)
 
             if args["print"] > 0:
                 print("Distance: ", str(distance))
+                print("Angle: ", str(angle))
 
             putInNetworkTable(nt, "Distance To Boiler", str(distance))
+            putInNetworkTable(nt, "Angle To Boiler", str(angle))
 
     else:
         putInNetworkTable(nt, 'Distance To Boiler', 'Not Detected')
+        putInNetworkTable(nt, 'Angle To Boiler', 'Not Detected')
 
     if args["display"] > 0:
         '''Shows the images to the screen'''

@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f340fa6f-d255-4239-89db-ba98a435fb2e" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/TestDistance2.py" afterPath="" />
+    <list default="true" id="f340fa6f-d255-4239-89db-ba98a435fb2e" name="Default" comment="Add distance to BoilerTargetDetection">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/BoilerTargetDetection.py" afterPath="$PROJECT_DIR$/BoilerTargetDetection.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/CalibrateCamera.py" afterPath="$PROJECT_DIR$/CalibrateCamera.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/GearTargetDetection.py" afterPath="$PROJECT_DIR$/GearTargetDetection.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/HsvValues.csv" afterPath="$PROJECT_DIR$/HsvValues.csv" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/SetupUtil.py" afterPath="$PROJECT_DIR$/SetupUtil.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/TestDistance.py" afterPath="$PROJECT_DIR$/TestDistance.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/VisionUtils.py" afterPath="$PROJECT_DIR$/VisionUtils.py" />
@@ -27,8 +26,8 @@
       <file leaf-file-name="TestDistance.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/TestDistance.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="5" column="5" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="6" selection-end-column="20" />
+            <state relative-caret-position="473">
+              <caret line="45" column="0" lean-forward="true" selection-start-line="45" selection-start-column="0" selection-end-line="45" selection-end-column="0" />
               <folding>
                 <element signature="e#0#57#0" expanded="true" />
               </folding>
@@ -36,11 +35,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="BoilerTargetDetection.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="BoilerTargetDetection.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/BoilerTargetDetection.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="360">
-              <caret line="24" column="25" lean-forward="false" selection-start-line="24" selection-start-column="25" selection-end-line="24" selection-end-column="25" />
+            <state relative-caret-position="195">
+              <caret line="13" column="0" lean-forward="false" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
               <folding>
                 <element signature="e#0#57#0" expanded="true" />
               </folding>
@@ -51,8 +50,30 @@
       <file leaf-file-name="SetupUtil.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/SetupUtil.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="10" column="8" lean-forward="true" selection-start-line="10" selection-start-column="8" selection-end-line="10" selection-end-column="8" />
+            <state relative-caret-position="30">
+              <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="CalibrateCamera.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/CalibrateCamera.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#57#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="HsvValues.csv" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/HsvValues.csv">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="75">
+              <caret line="5" column="12" lean-forward="false" selection-start-line="5" selection-start-column="12" selection-end-line="5" selection-end-column="12" />
               <folding />
             </state>
           </provider>
@@ -71,8 +92,8 @@
       <file leaf-file-name="VisionUtils.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/VisionUtils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="795">
-              <caret line="93" column="0" lean-forward="true" selection-start-line="93" selection-start-column="0" selection-end-line="93" selection-end-column="0" />
+            <state relative-caret-position="270">
+              <caret line="21" column="30" lean-forward="false" selection-start-line="21" selection-start-column="30" selection-end-line="21" selection-end-column="30" />
               <folding />
             </state>
           </provider>
@@ -104,6 +125,11 @@
     </findStrings>
   </component>
   <component name="Git.Settings">
+    <option name="PREVIOUS_COMMIT_AUTHORS">
+      <list>
+        <option value="Brian Chen &lt;brianchen0810@gmail.com&gt;" />
+      </list>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="IdeDocumentHistory">
@@ -117,20 +143,20 @@
         <option value="$PROJECT_DIR$/VisionTest.py" />
         <option value="$PROJECT_DIR$/MultithreadVision.py" />
         <option value="$PROJECT_DIR$/HsvValues (copy).csv" />
-        <option value="$PROJECT_DIR$/HsvValues.csv" />
         <option value="$PROJECT_DIR$/MJPG.py" />
         <option value="$PROJECT_DIR$/MJPGTest.py" />
-        <option value="$PROJECT_DIR$/CalibrateCamera.py" />
         <option value="$PROJECT_DIR$/TestVision.py" />
         <option value="$PROJECT_DIR$/BoilerAndGearTarget.py" />
         <option value="$PROJECT_DIR$/Test.py" />
         <option value="$PROJECT_DIR$/MultithreadVideoStream.py" />
         <option value="$PROJECT_DIR$/TestDistance2.py" />
-        <option value="$PROJECT_DIR$/TestDistance.py" />
-        <option value="$PROJECT_DIR$/SetupUtil.py" />
         <option value="$PROJECT_DIR$/GearTargetDetection.py" />
         <option value="$PROJECT_DIR$/VisionUtils.py" />
         <option value="$PROJECT_DIR$/BoilerTargetDetection.py" />
+        <option value="$PROJECT_DIR$/SetupUtil.py" />
+        <option value="$PROJECT_DIR$/HsvValues.csv" />
+        <option value="$PROJECT_DIR$/TestDistance.py" />
+        <option value="$PROJECT_DIR$/CalibrateCamera.py" />
       </list>
     </option>
   </component>
@@ -478,10 +504,11 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="65" y="24" width="1615" height="1026" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15417957" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32912722" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32912722" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -504,9 +531,15 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT" value="true" />
     <MESSAGE value="Add HsvValues.txt" />
     <MESSAGE value="Change to MultithreadVision" />
-    <option name="LAST_COMMIT_MESSAGE" value="Change to MultithreadVision" />
+    <MESSAGE value="Add distance to BoilerTargetDetection" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add distance to BoilerTargetDetection" />
+    <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -613,23 +646,9 @@
     <entry file="file://$PROJECT_DIR$/Vision.py" />
     <entry file="file://$PROJECT_DIR$/MJPG.py" />
     <entry file="file://$PROJECT_DIR$/MJPGTest.py" />
-    <entry file="file://$PROJECT_DIR$/CalibrateCamera.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="34" column="20" lean-forward="false" selection-start-line="34" selection-start-column="20" selection-end-line="34" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/BoilerAndGearTarget.py" />
     <entry file="file://$PROJECT_DIR$/Test.py" />
     <entry file="file://$PROJECT_DIR$/TestVision.py" />
-    <entry file="file://$PROJECT_DIR$/HsvValues.csv">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="1" column="12" lean-forward="false" selection-start-line="1" selection-start-column="12" selection-end-line="1" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/TestDistance2.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="570">
@@ -646,32 +665,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/TestDistance.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" column="5" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="6" selection-end-column="20" />
-          <folding>
-            <element signature="e#0#57#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/SetupUtil.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="10" column="8" lean-forward="true" selection-start-line="10" selection-start-column="8" selection-end-line="10" selection-end-column="8" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/VisionUtils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="795">
-          <caret line="93" column="0" lean-forward="true" selection-start-line="93" selection-start-column="0" selection-end-line="93" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/GearTargetDetection.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
@@ -680,10 +673,54 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/VisionUtils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="21" column="30" lean-forward="false" selection-start-line="21" selection-start-column="30" selection-end-line="21" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/BoilerTargetDetection.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="24" column="25" lean-forward="false" selection-start-line="24" selection-start-column="25" selection-end-line="24" selection-end-column="25" />
+        <state relative-caret-position="195">
+          <caret line="13" column="0" lean-forward="false" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#57#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SetupUtil.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HsvValues.csv">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="12" lean-forward="false" selection-start-line="5" selection-start-column="12" selection-end-line="5" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/TestDistance.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="473">
+          <caret line="45" column="0" lean-forward="true" selection-start-line="45" selection-start-column="0" selection-end-line="45" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#57#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CalibrateCamera.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#0#57#0" expanded="true" />
           </folding>

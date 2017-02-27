@@ -1,7 +1,6 @@
 from MultithreadVideoStream import MultithreadVideoStream
 from SetupUtil import *
 from VisionUtils import *
-import math
 
 BOILER_HEIGHT = 88.5
 CAMERA_HEIGHT = 21.5
@@ -35,8 +34,8 @@ while True:
 
         if w > h:
             degrees = ((480 - y)/480) * 38.5
-            #print("Degrees High: ", degrees)
-            #print("Distance: ", (BOILER_HEIGHT-CAMERA_HEIGHT)/math.sin(math.radians(degrees + 21.75)))
+            print("Degrees High: ", degrees)
+            print("Distance: ", (BOILER_HEIGHT - CAMERA_HEIGHT) / math.sin(math.radians(degrees + 21.75)))
 
     if args["display"] > 0:
         cv2.imshow("Frame", frame)
@@ -46,4 +45,4 @@ while True:
             break
 
 camera.release()
-cv2.destroyAllWindows
+cv2.destroyAllWindows()
