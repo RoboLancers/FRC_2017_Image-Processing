@@ -26,7 +26,7 @@ while True:
 
     frame = camera.read()
 
-    mask = preprocessImage(frame, greenLower, greenUpper)
+    mask = preprocess_image(frame, greenLower, greenUpper)
 
     contours = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
 
@@ -39,7 +39,7 @@ while True:
     cv2.imshow("Frame", frame)
     cv2.imshow("Mask", mask)
 
-    if checkkeypressed():
+    if check_key_pressed():
         break
 
 writeHSV()

@@ -5,22 +5,17 @@ from MultithreadVideoStream import MultithreadVideoStream
 from SetupUtil import *
 from VisionUtils import *
 
-
 '''Create threaded video stream'''
 
 camera = MultithreadVideoStream(src=0).start()
 
-
-
-
-args = parsearguments()
+args = parse_arguments()
 
 nt = setUpNetworkTables()
 
 MIN_PERIMETER = 50
 
 hsv_values = readHSV()
-
 
 while True:
 
@@ -29,13 +24,13 @@ while True:
 
     '''Read frame from thread camera'''
     frame = camera.read()
-        
+
     while frame is None:
         print("Trying")
         frame = camera.read()
 
     '''Process the image to get a mask'''
-    mask = preprocessImage(frame, greenLower, greenUpper)
+    mask = preprocess_image(frame, greenLower, greenUpper)
 
     '''Find the contour in the mask'''
     contours = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
@@ -57,10 +52,10 @@ while True:
         x, y, w, h = cv2.boundingRect(first_largest_contour)
         x1, y1, w1, h1 = cv2.boundingRect(second_largest_contour)
 
-        if aspectRatioOfGear(w,h) and aspectRatioOfGear(w1, h1):
+        if aspectRatioOfGear(w, h) and aspectRatioOfGear(w1, h1):
             average_angle_to_middle = calculateAngleToCenterOfContour(frame, first_largest_contour,
-                                                                  second_largest_contour)
-            if args["printangle"] > 0:
+                                                                      second_largest_contour)
+            if args["print"] > 0:
                 print(str(average_angle_to_middle))
 
             average_middle_string = str(average_angle_to_middle)
@@ -75,7 +70,7 @@ while True:
         cv2.imshow("Frame", frame)
         cv2.imshow("Mask Frame", mask)
 
-        if checkkeypressed():
+        if check_key_pressed():
             break
 
 '''Clean up the camera and close all windows'''

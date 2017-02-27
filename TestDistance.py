@@ -6,9 +6,8 @@ import math
 BOILER_HEIGHT = 88.5
 CAMERA_HEIGHT = 21.5
 
-
 camera = MultithreadVideoStream(0).start()
-args = parsearguments()
+args = parse_arguments()
 nt = setUpNetworkTables()
 hsv_values = readHSV()
 
@@ -18,7 +17,7 @@ greenUpper = np.array([int(hsv_values[1][1]), int(hsv_values[3][1]), int(hsv_val
 
 while True:
     frame = camera.read()
-    mask = preprocessImage(frame, greenLower, greenUpper)
+    mask = preprocess_image(frame, greenLower, greenUpper)
 
     contours = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
     contours = [x for x in contours if not cv2.arcLength(x, True) < 50]
@@ -36,16 +35,14 @@ while True:
 
         if w > h:
             degrees = ((480 - y)/480) * 38.5
-            print(480 - y)
-            cv2.circle(frame, (int((x + x + w )/2),y), 10, (255,255,0))
-            print("Degrees High: ", degrees)
-            print("Distance: ", (BOILER_HEIGHT-CAMERA_HEIGHT)/math.sin(math.radians(degrees + 21.75)))
+            #print("Degrees High: ", degrees)
+            #print("Distance: ", (BOILER_HEIGHT-CAMERA_HEIGHT)/math.sin(math.radians(degrees + 21.75)))
 
     if args["display"] > 0:
         cv2.imshow("Frame", frame)
         cv2.imshow("mask", mask)
 
-        if checkkeypressed():
+        if check_key_pressed():
             break
 
 camera.release()

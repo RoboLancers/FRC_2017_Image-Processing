@@ -2,9 +2,10 @@ import cv2
 import numpy as np
 import math
 
+BOILER_HEIGHT = 88.5
+CAMERA_HEIGHT = 21.5
 
-tiltAngle = 0
-'''Calculate the centroid of the contour'''
+
 def calculate_centroid(contour):
     moment = cv2.moments(contour)
     if moment["m00"] > 0:
@@ -16,8 +17,8 @@ def calculate_centroid(contour):
 
     return center_x, center_y
 
-'''Find the angle to turn'''
-def get_angle_gear(frames, contour):
+
+def get_angle_to_gear(frames, contour):
     height, width, channel = frames.shape
     center_x, center_y = calculate_centroid(contour)
 
@@ -26,29 +27,26 @@ def get_angle_gear(frames, contour):
 
     return angle_offset
 
-'''This finds the center of the two contours'''
 def find_center(contour1, contour2):
     center_x1, center_y1 = calculate_centroid(contour1)
     center_x2, center_y2 = calculate_centroid(contour2)
     return (center_x1 + center_x2) / 2
 
-def preprocessImage(image, greenLower, greenUpper):
-    '''Convert the frame to the hsv color-space'''
+
+def preprocess_image(image, green_lower, green_upper):
     hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
     blurred_image = cv2.bilateralFilter(hsv_image, 9, 75, 75)
 
     '''Creates a mask for the color green'''
-    mask = cv2.inRange(blurred_image, greenLower, greenUpper)
+    mask = cv2.inRange(blurred_image, green_lower, green_upper)
 
     kernel = np.ones((3, 3), np.uint8)
-    #kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (2,2), anchor=1)
 
     maskRemoveNoise = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
 
     maskCloseHoles = cv2.morphologyEx(maskRemoveNoise, cv2.MORPH_CLOSE, kernel, iterations=2)
 
-    '''Erode and dilate the mask to remove blobs'''
     mask = cv2.erode(maskCloseHoles, kernel, iterations=2)
     mask = cv2.dilate(mask, kernel, iterations=2)
 
@@ -58,51 +56,42 @@ def preprocessImage(image, greenLower, greenUpper):
 def findAndSortContourArea(contours):
     area_array = []
 
-    '''Fill the array with contour areas'''
     for i, j in enumerate(contours):
         area = cv2.contourArea(j)
         area_array.append(area)
 
-    '''Sort the array based on contour area'''
     sortedArray = sorted(zip(area_array, contours), key=lambda x: x[0], reverse=True)
 
     return sortedArray
 
 
-def calculateAngleToCenterOfContour(frameForAngle, firstLargestContour, secondLargestContour):
-    '''Find the angle to first target and round it'''
-    angletofirsttarget = get_angle_gear(frameForAngle, firstLargestContour)
-    angletofirsttarget = round(angletofirsttarget, 2)
+def calculateAngleToCenterOfContour(frame_for_angle, first_largest_contour, second_largest_contour):
+    # Find the angle to first target and round it
+    angle_to_first_target = get_angle_to_gear(frame_for_angle, first_largest_contour)
+    angle_to_first_target = round(angle_to_first_target, 2)
 
-    '''Calculate the angle to the second target'''
-    angletosecondtarget = get_angle_gear(frameForAngle, secondLargestContour)
-    angletosecondtarget = round(angletosecondtarget, 2)
+    angle_to_second_target = get_angle_to_gear(frame_for_angle, second_largest_contour)
+    angle_to_second_target = round(angle_to_second_target, 2)
 
-    '''Calculate the middle by finding the mean'''
-    angle_to_middle = (angletofirsttarget + angletosecondtarget) / 2
+    angle_to_middle = (angle_to_first_target + angle_to_second_target) / 2
 
     return angle_to_middle
 
+
 def aspectRatioOfGear(w, h):
-    ''' returns true if the rectangle is
-    of the correct aspect ratio and false if not.'''
+    """ returns true if the rectangle is
+    of the correct aspect ratio and false if not."""
     return w / h >= 1.5 / 5 and w / h <= 3.5 / 5
 
+
 def percentFilled(w, h, cnt):
-    ''' returns if the contour occupies at least 70% of the area of it's bounding rectangle '''
+    """ returns if the contour occupies at least 70% of the area of it's bounding rectangle """
     return cv2.contourArea(cnt) >= 0.7 * w * h
 
-def find_distance(x1,y1,x2,y2):
-    root = math.sqrt(  ((x2 - x1) ** 2) + ((y2 - y1) ** 2)  )
-    rootInt = int(root)
-    return rootInt
 
-def findDistanceToTarget(width):
-    # note that the width is multiplied by 2 because of resolution change on the image
-    # this change allows the new resolution to fit with the correct model
-    distance = (44.139 * math.exp((-0.012 * (2 * width)))) + 1 - float((tiltAngle / 10))
-    return distance
+def degreesAboveCamera(boundingY):
+    return ((480 - boundingY) / 480) * 38.5
 
-def findAngle(distance):
-    angle = (.1183*(distance **2 ) - (3.468 * distance) + 69.203)
-    return angle
+
+def distanceFromBoilerCamera(degrees):
+    return (BOILER_HEIGHT - CAMERA_HEIGHT) / math.sin(math.radians(degrees + 21.75))
